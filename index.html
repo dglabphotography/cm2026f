@@ -257,6 +257,31 @@ main{max-width:920px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index
 .stat-val{font-family:'Bebas Neue';font-size:1.4rem;color:var(--gold-l);}
 .stat-lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
 
+/* KO PRONO EXTRA PANEL */
+.ko-panel{margin-top:.55rem;padding:.65rem .85rem;background:rgba(4,12,38,.6);border:1px solid var(--ice-border);border-radius:var(--r2);display:none;}
+.ko-panel.show{display:block;}
+.ko-section{margin-bottom:.5rem;}
+.ko-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.35rem;display:flex;align-items:center;gap:.4rem;}
+.ko-label::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;}
+.ko-label.et-label::before{background:var(--gold-l);}
+.ko-label.tab-label::before{background:var(--purple);}
+.ko-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+.ko-toggle-wrap{display:flex;gap:.4rem;margin-bottom:.45rem;}
+.ko-toggle{flex:1;padding:.38rem .5rem;border-radius:8px;border:1px solid var(--ice-border);background:rgba(5,15,45,.5);color:var(--muted);font-family:'DM Sans';font-size:.73rem;font-weight:600;cursor:pointer;transition:.2s;text-align:center;}
+.ko-toggle:hover{border-color:var(--ice-border2);color:var(--text);}
+.ko-toggle.active.draw{border-color:rgba(245,185,58,.5);background:rgba(245,185,58,.1);color:var(--gold-l);}
+.ko-toggle.active.et{border-color:rgba(64,144,255,.5);background:rgba(64,144,255,.1);color:#93C5FD;}
+.ko-toggle.active.tab{border-color:rgba(139,92,246,.5);background:rgba(139,92,246,.1);color:#C4B5FD;}
+.si-sm{width:36px;height:36px;text-align:center;background:rgba(5,15,45,.75);border:1px solid var(--ice-border);border-top:1px solid var(--ice-border2);border-radius:var(--r2);color:#E8F4FF;font-size:.95rem;font-weight:700;font-family:'Bebas Neue';outline:none;transition:.25s;-moz-appearance:textfield;box-shadow:inset 0 2px 8px rgba(0,0,30,.5);}
+.si-sm::-webkit-inner-spin-button,.si-sm::-webkit-outer-spin-button{-webkit-appearance:none;}
+.si-sm:focus{border-color:rgba(100,180,255,.8);box-shadow:0 0 0 2px rgba(60,150,255,.25);}
+.tab-pick{display:flex;gap:.35rem;}
+.tab-btn{flex:1;padding:.38rem .5rem;border-radius:8px;border:1px solid var(--ice-border);background:rgba(5,15,45,.5);color:var(--muted);font-family:'DM Sans';font-size:.72rem;font-weight:700;cursor:pointer;transition:.2s;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tab-btn:hover{border-color:rgba(139,92,246,.5);color:#C4B5FD;}
+.tab-btn.active{border-color:rgba(139,92,246,.6);background:rgba(139,92,246,.15);color:#C4B5FD;}
+.ko-lock-info{font-size:.68rem;color:var(--muted);font-style:italic;margin-top:.3rem;}
+.ko-saved-line{font-size:.73rem;color:var(--green);margin-top:.3rem;display:flex;align-items:center;gap:.3rem;}
+
 /* FILTER */
 .fbar{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.1rem;}
 .fb{background:var(--s1);border:1px solid var(--ice-border);border-radius:var(--r2);padding:.32rem .75rem;font-size:.76rem;cursor:pointer;color:var(--muted);font-family:'DM Sans';font-weight:500;}
@@ -339,7 +364,7 @@ main{max-width:920px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index
 <div style="position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 120% 60% at 50% 100%,rgba(0,40,100,.8) 0%,transparent 60%),radial-gradient(ellipse 200% 80% at 50% 110%,rgba(10,60,150,.4) 0%,transparent 50%);"></div>
 
 <!-- AUTH -->
-<div id="auth-screen" style="display:flex;">
+<div id="auth-screen" style="display:flex;"><div id="diag" style="display:none;position:fixed;top:0;left:0;right:0;background:red;color:white;padding:10px;font-size:14px;z-index:9999;word-break:break-all;"></div>
   <div class="auth-box">
     <div class="auth-trophy">🏆</div>
     <div class="auth-logo">CM 2026</div>
@@ -421,6 +446,8 @@ main{max-width:920px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index
 <div id="toast"></div>
 
 <script>
+window.onerror=function(msg,src,line,col,err){var d=document.getElementById("diag");if(d){d.style.display="block";d.textContent="JS ERROR: "+msg+" (ligne "+line+")";} return false;};
+window.addEventListener("unhandledrejection",function(e){var d=document.getElementById("diag");if(d){d.style.display="block";d.textContent="Promise error: "+(e.reason&&e.reason.message?e.reason.message:e.reason);} });
 // ═══════════════════════════════════════════════
 // CANVAS BACKGROUND
 // ═══════════════════════════════════════════════
@@ -543,18 +570,15 @@ const SUPABASE_URL='https://ypoiklhzwumoaojokbqg.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlwb2lrbGh6d3Vtb2Fvam9rYnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NTk0NDQsImV4cCI6MjA5NjQzNTQ0NH0.MCOMb4ppz6f7x_OA_usp5kOJe0PZfnunFM8Bv_Nend8';
 const SBH={'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
 async function sbGet(table,filter){
-  try{
-    const url=SUPABASE_URL+'/rest/v1/'+table+'?'+(filter||'')+'&limit=1000';
-    const r=await fetch(url,{headers:Object.assign({'Accept':'application/json'},SBH)});
-    if(!r.ok)return null;
-    const d=await r.json();return Array.isArray(d)?d:null;
-  }catch(e){return null;}
+  const url=SUPABASE_URL+'/rest/v1/'+table+'?'+(filter||'')+'&limit=1000';
+  const r=await fetch(url,{headers:Object.assign({'Accept':'application/json'},SBH)});
+  if(!r.ok){const err=await r.json().catch(()=>({message:'Erreur reseau'}));throw new Error(err.message||'Erreur '+r.status);}
+  const d=await r.json();return Array.isArray(d)?d:[];
 }
 async function sbUpsert(table,data){
-  try{
-    const r=await fetch(SUPABASE_URL+'/rest/v1/'+table,{method:'POST',headers:Object.assign({'Prefer':'resolution=merge-duplicates'},SBH),body:JSON.stringify(data)});
-    return r.ok;
-  }catch(e){return false;}
+  const r=await fetch(SUPABASE_URL+'/rest/v1/'+table,{method:'POST',headers:Object.assign({'Prefer':'resolution=merge-duplicates'},SBH),body:JSON.stringify(data)});
+  if(!r.ok){const err=await r.json().catch(()=>({message:'Erreur reseau'}));throw new Error(err.message||'Erreur '+r.status);}
+  return true;
 }
 async function sbDelete(table,filter){
   try{
@@ -669,7 +693,7 @@ const MATCHES=[
   {id:'K6',kickoffUTC:'2026-06-27T23:30:00Z',phase:'group',group:'K',dateISO:'2026-06-28',dateLabel:'Dimanche 28 juin',home:'RD Congo',away:'Ouzbekistan'},
   {id:'J5',kickoffUTC:'2026-06-28T02:00:00Z',phase:'group',group:'J',dateISO:'2026-06-28',dateLabel:'Dimanche 28 juin',home:'Algerie',away:'Autriche'},
   {id:'J6',kickoffUTC:'2026-06-28T02:00:00Z',phase:'group',group:'J',dateISO:'2026-06-28',dateLabel:'Dimanche 28 juin',home:'Jordanie',away:'Argentine'},
-  {id:'R32_1',kickoffUTC:'2026-06-28T19:00:00Z',phase:'r32',group:null,dateISO:'2026-06-28',dateLabel:'Dimanche 28 juin',home:'2e Groupe A',away:'2e Groupe B'},
+  {id:'R32_1',kickoffUTC:'2026-06-28T19:00:00Z',phase:'r32',group:null,dateISO:'2026-06-28',dateLabel:'Dimanche 28 juin',home:'Coree du Sud',away:'Canada'},
   {id:'R32_2',kickoffUTC:'2026-06-29T17:00:00Z',phase:'r32',group:null,dateISO:'2026-06-29',dateLabel:'Lundi 29 juin',home:'1er Groupe C',away:'2e Groupe F'},
   {id:'R32_3',kickoffUTC:'2026-06-29T20:30:00Z',phase:'r32',group:null,dateISO:'2026-06-29',dateLabel:'Lundi 29 juin',home:'1er Groupe E',away:'3e A/B/C/D/F'},
   {id:'R32_4',kickoffUTC:'2026-06-30T01:00:00Z',phase:'r32',group:null,dateISO:'2026-06-30',dateLabel:'Mardi 30 juin',home:'1er Groupe F',away:'2e Groupe C'},
@@ -765,7 +789,7 @@ async function register(){
     await sbUpsert('cm26_scores',{pseudo:pseudo.toLowerCase(),total:0,p3:0,p2:0,p1:0,survey_pts:0});
     amsg('r-msg',isAdmin?'Compte cree ! Tu es administrateur.':'Compte cree !','ok');
     setTimeout(function(){doLogin({pseudo:pseudo.toLowerCase(),displayPseudo:pseudo,isAdmin:isAdmin});},800);
-  }catch(e){btn.disabled=false;amsg('r-msg','Erreur : '+e.message);}
+  }catch(e){btn.disabled=false;amsg('r-msg','Erreur : '+e.message+' — Verifie ta connexion ou contacte l\'admin.');}
 }
 async function login(){
   const pseudo=document.getElementById('l-pseudo').value.trim().toLowerCase();
@@ -780,7 +804,7 @@ async function login(){
     const hash=await sha256(pwd);
     if(hash!==ud.hash){btn.disabled=false;return amsg('l-msg','Mot de passe incorrect.');}
     doLogin({pseudo:ud.pseudo,displayPseudo:ud.pseudo,isAdmin:ud.is_admin});
-  }catch(e){btn.disabled=false;amsg('l-msg','Erreur de connexion.');}
+  }catch(e){btn.disabled=false;amsg('l-msg','Erreur : '+e.message);}
 }
 function doLogin(user){
   CU=user;
@@ -857,16 +881,137 @@ function showPage(id,btn){
 // ═══════════════════════════════════════════════
 // PRONOSTICS
 // ═══════════════════════════════════════════════
-var myPronos={}, globalResults={};
+var myPronos={}, myKoPronos={}, globalResults={};
+// myKoPronos[mid] = {outcome:'draw'|'et'|'tab', etHome, etAway, tabWinner}
+
 function fmtKO(utc){
   if(!utc) return '';
   return new Date(utc).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Paris'})+' (heure fr)';
 }
+
+function isKoPhase(phase){return phase==='r32'||phase==='r16'||phase==='qf'||phase==='sf'||phase==='3pl'||phase==='fin';}
+
+function buildKoPanelHTML(m, locked, kp){
+  // kp = myKoPronos[m.id] or undefined
+  var outcome = kp ? kp.outcome : null;
+  var etHome = kp ? (kp.etHome!==undefined&&kp.etHome!==null?kp.etHome:'') : '';
+  var etAway = kp ? (kp.etAway!==undefined&&kp.etAway!==null?kp.etAway:'') : '';
+  var tabWinner = kp ? kp.tabWinner : null;
+
+  if(locked){
+    // Show saved KO info read-only
+    if(!kp || outcome===null) return '<div class="ko-panel show"><div class="ko-lock-info">Aucun pronostic elimination saisi.</div></div>';
+    var oc = outcome==='draw'?'⚖️ Nul (90min)':(outcome==='et'?'⏱️ Score après prolong.':'🎯 Tirs au but');
+    var detail = '';
+    if(outcome==='et'||outcome==='tab'){
+      detail = ' — '+etHome+' : '+etAway+' (après prolong.)';
+    }
+    if(outcome==='tab') detail += ' — Vainqueur TAB : <strong>'+tabWinner+'</strong>';
+    return '<div class="ko-panel show"><div class="ko-saved-line">✓ '+oc+detail+'</div></div>';
+  }
+
+  var hName = m.home, aName = m.away;
+  var html = '<div class="ko-panel show" id="kopanel-'+m.id+'">';
+  html += '<div style="font-size:.66rem;color:var(--muted);margin-bottom:.5rem;font-style:italic">Si le score est nul à 90 min, comment ça se finit ?</div>';
+  html += '<div class="ko-section"><div class="ko-label et-label">Résultat à 90 minutes</div>';
+  html += '<div class="ko-toggle-wrap">';
+  html += '<div class="ko-toggle draw'+(outcome==='draw'?' active':'')+'" onclick="setKoOutcome(\''+m.id+'\',\'draw\')">⚖️ Nul (90min)</div>';
+  html += '<div class="ko-toggle et'+(outcome==='et'?' active':'')+'" onclick="setKoOutcome(\''+m.id+'\',\'et\')">⏱️ Vainqueur prolong.</div>';
+  html += '<div class="ko-toggle tab'+(outcome==='tab'?' active':'')+'" onclick="setKoOutcome(\''+m.id+'\',\'tab\')">🎯 TAB</div>';
+  html += '</div></div>';
+
+  // ET score section
+  var showEt = outcome==='et'||outcome==='tab';
+  html += '<div class="ko-section" id="ko-et-'+m.id+'" style="display:'+(showEt?'block':'none')+'">';
+  html += '<div class="ko-label et-label">Score après prolongations</div>';
+  html += '<div class="ko-row">';
+  html += '<span style="font-size:.72rem;color:var(--muted);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+hName+'</span>';
+  html += '<input type="number" class="si-sm" min="0" max="99" id="koeth-'+m.id+'" value="'+etHome+'" placeholder="-" oninput="autoSaveKo(\''+m.id+'\')">';
+  html += '<span class="sep" style="font-size:1rem">:</span>';
+  html += '<input type="number" class="si-sm" min="0" max="99" id="koeta-'+m.id+'" value="'+etAway+'" placeholder="-" oninput="autoSaveKo(\''+m.id+'\')">';
+  html += '<span style="font-size:.72rem;color:var(--muted);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right">'+aName+'</span>';
+  html += '</div></div>';
+
+  // TAB winner section
+  var showTab = outcome==='tab';
+  html += '<div class="ko-section" id="ko-tab-'+m.id+'" style="display:'+(showTab?'block':'none')+'">';
+  html += '<div class="ko-label tab-label">Vainqueur des tirs au but</div>';
+  html += '<div class="tab-pick">';
+  html += '<div class="tab-btn'+(tabWinner===hName?' active':'')+'" onclick="setTabWinner(\''+m.id+'\',\''+hName.replace(/'/g,"\\'")+'\')">'+hName+'</div>';
+  html += '<div class="tab-btn'+(tabWinner===aName?' active':'')+'" onclick="setTabWinner(\''+m.id+'\',\''+aName.replace(/'/g,"\\'")+'\')">'+aName+'</div>';
+  html += '</div></div>';
+
+  html += '</div>';
+  return html;
+}
+
+function setKoOutcome(mid, val){
+  if(!myKoPronos[mid]) myKoPronos[mid]={};
+  myKoPronos[mid].outcome = val;
+  // Show/hide sub-sections
+  var etSec = document.getElementById('ko-et-'+mid);
+  var tabSec = document.getElementById('ko-tab-'+mid);
+  if(etSec) etSec.style.display = (val==='et'||val==='tab')?'block':'none';
+  if(tabSec) tabSec.style.display = val==='tab'?'block':'none';
+  // Update toggle styles
+  var panel = document.getElementById('kopanel-'+mid);
+  if(panel){
+    panel.querySelectorAll('.ko-toggle').forEach(function(t){
+      var cls = t.classList;
+      cls.remove('active');
+      if((val==='draw'&&cls.contains('draw'))||(val==='et'&&cls.contains('et'))||(val==='tab'&&cls.contains('tab'))) cls.add('active');
+    });
+  }
+  autoSaveKo(mid);
+}
+
+function setTabWinner(mid, team){
+  if(!myKoPronos[mid]) myKoPronos[mid]={};
+  myKoPronos[mid].tabWinner = team;
+  var panel = document.getElementById('kopanel-'+mid);
+  if(panel){
+    panel.querySelectorAll('.tab-btn').forEach(function(b){
+      b.classList.toggle('active', b.textContent.trim()===team);
+    });
+  }
+  autoSaveKo(mid);
+}
+
+var _koTimers={};
+function autoSaveKo(mid){clearTimeout(_koTimers[mid]);_koTimers[mid]=setTimeout(function(){saveKoProno(mid);},600);}
+
+async function saveKoProno(mid){
+  var match=MATCHES.find(function(m){return m.id===mid;});
+  if(match&&match.kickoffUTC&&Date.now()>=new Date(match.kickoffUTC).getTime()) return;
+  var kp=myKoPronos[mid];
+  if(!kp||!kp.outcome) return;
+  var etHEl=document.getElementById('koeth-'+mid), etAEl=document.getElementById('koeta-'+mid);
+  if(etHEl&&etAEl&&etHEl.value!==''&&etAEl.value!==''){
+    kp.etHome=parseInt(etHEl.value);
+    kp.etAway=parseInt(etAEl.value);
+  }
+  var payload={
+    pseudo:CU.pseudo, match_id:mid,
+    outcome:kp.outcome,
+    et_home:kp.etHome!==undefined?kp.etHome:null,
+    et_away:kp.etAway!==undefined?kp.etAway:null,
+    tab_winner:kp.tabWinner||null
+  };
+  await sbUpsert('cm26_ko_pronos', payload).catch(function(){});
+  toast('Prono sauvegarde','ok');
+}
+
 async function renderProno(){
   document.getElementById('prono-content').innerHTML='<div class="loading-page"><span class="spinner"></span> Chargement...</div>';
   var rows=await sbGet('cm26_pronos','pseudo=eq.'+encodeURIComponent(CU.pseudo));
   myPronos={};
   if(rows) rows.forEach(function(r){myPronos[r.match_id]={home:r.home_score,away:r.away_score};});
+  // Load KO pronos
+  var koRows=await sbGet('cm26_ko_pronos','pseudo=eq.'+encodeURIComponent(CU.pseudo)).catch(function(){return [];});
+  myKoPronos={};
+  if(koRows) koRows.forEach(function(r){
+    myKoPronos[r.match_id]={outcome:r.outcome,etHome:r.et_home,etAway:r.et_away,tabWinner:r.tab_winner};
+  });
   var rrows=await sbGet('cm26_results','');
   globalResults={};
   if(rrows) rrows.forEach(function(r){globalResults[r.match_id]={home:r.home_score,away:r.away_score};});
@@ -886,19 +1031,22 @@ async function renderProno(){
     html+='<div class="date-hd"><span class="date-badge">'+info.label+'</span></div>';
     info.matches.forEach(function(m){
       var p=myPronos[m.id];
+      var kp=myKoPronos[m.id];
       var now=Date.now();
       var kickoff=m.kickoffUTC?new Date(m.kickoffUTC).getTime():Infinity;
       var started=now>=kickoff;
       var locked=started||!!globalResults[m.id];
       var saved=p&&p.home!==undefined&&p.home!==null;
+      var koSaved=kp&&kp.outcome;
       var fh=FLAGS[m.home]||'', fa=FLAGS[m.away]||'';
       var hc=TEAM_GROUP[m.home]?'onclick="openTeamModal(\''+m.home+'\')"':'';
       var ac=TEAM_GROUP[m.away]?'onclick="openTeamModal(\''+m.away+'\')"':'';
       var ko=fmtKO(m.kickoffUTC);
-      var cls='mc'+(saved?' saved':'')+(locked?' locked':'')+(started&&!globalResults[m.id]?' started':'');
+      var isKo=isKoPhase(m.phase);
+      var cls='mc'+(saved||koSaved?' saved':'')+(locked?' locked':'')+(started&&!globalResults[m.id]?' started':'');
       html+='<div class="'+cls+'" id="mc-'+m.id+'">';
       html+='<div class="team"><span class="flag">'+fh+'</span><span class="tn" '+hc+'>'+m.home+'</span></div>';
-      html+='<div class="mc-mid"><div class="mc-time">'+(ko||PL[m.phase])+'</div>';
+      html+='<div class="mc-mid"><div class="mc-time">'+(ko||PL[m.phase])+(isKo?'<br><span style="font-size:.58rem;color:var(--purple);font-weight:700;letter-spacing:.04em">⚡ ELIMINATION</span>':'')+'</div>';
       if(locked){
         html+='<div class="lock-score">'+(saved?p.home+' - '+p.away:'--')+'</div>';
         html+='<div class="lock-icon">'+(started?'Commence':'Saisi')+'</div>';
@@ -912,6 +1060,10 @@ async function renderProno(){
       html+='</div>';
       html+='<div class="team r"><span class="tn" '+ac+'>'+m.away+'</span><span class="flag">'+fa+'</span></div>';
       html+='</div>';
+      // KO Phase extra panel — always append after the card for KO matches
+      if(isKo){
+        html+=buildKoPanelHTML(m, locked, kp||null);
+      }
     });
   });
   var container=document.getElementById('prono-content');
@@ -996,7 +1148,7 @@ async function renderResults(){
         pronosTbl='<button class="pronos-toggle" onclick="togglePronos(this)"><span class="toggle-arrow">▶</span> Voir les pronos ('+userList.length+')</button>'
           +'<div class="pronos-collapse"><table class="pronos-tbl"><thead><tr><th>Joueur</th><th>Prono</th>'+colHeader+'</tr></thead><tbody>'+tblRows+'</tbody></table></div>';
       } else if(!kicked){
-        pronosTbl='<div class="hidden-notice">Pronos visibles au coup d'envoi.</div>';
+        pronosTbl='<div class="hidden-notice">Pronos visibles au coup d\'envoi.</div>';
       }
       var midHtml='';
       if(CU.isAdmin){
