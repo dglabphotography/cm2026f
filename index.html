@@ -1244,7 +1244,7 @@ async function renderRanking(){
   }
   var maxPts=rows[0].total||1;
   var podHtml='<div class="rank-podium">';
-  var icons=['🥈','🥇','🥉'];
+  var icons=['🥇','🥈','🥉'];
   var shown=rows.slice(0,3);
   [1,0,2].forEach(function(pos){
     if(!shown[pos]) return;
